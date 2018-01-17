@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Geofence checker</string>
+    <string name="lat">Latitude</string>
+    <string name="lng">Longitude</string>
+    <string name="radius">Radius</string>
+    <string name="wifi_name">WiFi name</string>
+    <string name="choose_on_map">Choose on map</string>
+</resources>
