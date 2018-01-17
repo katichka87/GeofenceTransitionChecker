@@ -4,28 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    tools:context="com.kateryna.testassignment.MainActivity">
+    tools:context="com.kateryna.testassignment.view.MainActivity">
+
+    <TextView
+        android:id="@+id/set_geofence_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:text="@string/set_geofence"/>
 
     <Button
         android:id="@+id/place_pick_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:text="@string/choose_on_map"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/set_geofence_label"
+        android:layout_alignBottom="@+id/lng_input_layout"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/lat_input_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/set_geofence_label"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/place_pick_btn">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/lat_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:hint="@string/lat"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -34,13 +46,16 @@
         android:id="@+id/lng_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_below="@id/lat_input_layout"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/place_pick_btn">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/lng_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:hint="@string/lng"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -49,13 +64,32 @@
         android:id="@+id/radius_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_below="@id/lng_input_layout">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/radius_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:hint="@string/radius"/>
 
     </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/set_geofence_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radius_input_layout"
+        android:layout_centerHorizontal="true"
+        android:text="@string/set_geofence_btn_label"/>
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/set_geofence_btn"
+        android:text="Not detected"
+        android:padding="16dp"/>
 
 </RelativeLayout>

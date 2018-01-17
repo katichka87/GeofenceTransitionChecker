@@ -2,7 +2,9 @@
     <string name="app_name">Geofence checker</string>
     <string name="lat">Latitude</string>
     <string name="lng">Longitude</string>
-    <string name="radius">Radius</string>
+    <string name="radius">Radius in meters</string>
     <string name="wifi_name">WiFi name</string>
-    <string name="choose_on_map">Choose on map</string>
+    <string name="choose_on_map">Choose\non\nmap</string>
+    <string name="set_geofence">Setup geofence</string>
+    <string name="set_geofence_btn_label">Set geofence</string>
 </resources>

@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,11 @@
 
         <service
             android:name=".device.GeofenceTransitionsIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDsGj6UVHpRQFHY5rNO-YokDiq-5lYuIkY"/>
     </application>
 
 </manifest>

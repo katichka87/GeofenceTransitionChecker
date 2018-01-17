@@ -41,5 +41,5 @@ class AppModule(val app: TestAssignmentApp) {
     @Provides
     @Singleton
     fun geofenceAdapter(geofencingClient: GeofencingClient, geofenceIntent: PendingIntent, receiver: GeofenceStateReceiver): GeofenceAdapter =
-            GeofenceAdapter(geofencingClient, geofenceIntent, receiver.stateChanges, Observable.just(true))
+            GeofenceAdapter(geofencingClient, geofenceIntent, receiver.stateChanges)
 }

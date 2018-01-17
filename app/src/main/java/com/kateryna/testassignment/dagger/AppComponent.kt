@@ -1,6 +1,6 @@
 package com.kateryna.testassignment.dagger
 
-import com.kateryna.testassignment.MainActivity
+import com.kateryna.testassignment.view.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 

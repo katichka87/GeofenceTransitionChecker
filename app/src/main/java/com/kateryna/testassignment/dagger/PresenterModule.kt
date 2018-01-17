@@ -1,6 +1,6 @@
 package com.kateryna.testassignment.dagger
 
-import com.kateryna.testassignment.Presenter
+import com.kateryna.testassignment.view.Presenter
 import com.kateryna.testassignment.adapters.GeofenceAdapter
 import dagger.Module
 import dagger.Provides

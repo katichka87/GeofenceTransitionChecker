@@ -7,13 +7,6 @@ import android.content.Intent
 import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
-import com.kateryna.testassignment.R
-import com.google.android.gms.location.GeofenceStatusCodes
-import android.text.TextUtils
-
-
-
-
 
 class GeofenceTransitionsIntentService : IntentService("GeofenceTransitionsIntentService") {
 
