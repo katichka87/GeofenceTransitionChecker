@@ -76,11 +76,27 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/wifi_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@id/radius_input_layout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/wifi_edit_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="@string/wifi_name"/>
+
+    </android.support.design.widget.TextInputLayout>
+
     <Button
         android:id="@+id/set_geofence_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/radius_input_layout"
+        android:layout_below="@id/wifi_input_layout"
         android:layout_centerHorizontal="true"
         android:text="@string/set_geofence_btn_label"/>
 
@@ -89,7 +105,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/set_geofence_btn"
-        android:text="Not detected"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
         android:padding="16dp"/>
 
 </RelativeLayout>

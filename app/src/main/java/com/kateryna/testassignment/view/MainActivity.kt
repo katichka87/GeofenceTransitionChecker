@@ -17,8 +17,8 @@ import com.kateryna.testassignment.R
 import com.kateryna.testassignment.TestAssignmentApp
 import com.kateryna.testassignment.adapters.EventType
 import com.kateryna.testassignment.device.GeofenceStateReceiver
+import com.kateryna.testassignment.device.NetworkChangeReceiver
 import com.kateryna.testassignment.interfcaces.ViewInterface
-import com.kateryna.testassignment.model.TransitionEvent
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
@@ -28,7 +28,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), ViewInterface {
 
     @Inject lateinit var presenter: Presenter
-    @Inject lateinit var receiver: GeofenceStateReceiver
+    @Inject lateinit var geofenceTransitionreceiver: GeofenceStateReceiver
+    @Inject lateinit var networkStatereceiver: NetworkChangeReceiver
     private val PLACE_PICKER_REQUEST = 1
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private var locationPermissionSubject: PublishSubject<Boolean>? = null
@@ -38,12 +39,17 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         setContentView(R.layout.activity_main)
         (application as TestAssignmentApp).appComponent.inject(this)
         presenter.view = this
-        registerReceiver(receiver, IntentFilter("com.kateryna.testassignment.GEOFENCE_TRANSITION_EVENT"))
+        registerReceiver(geofenceTransitionreceiver, IntentFilter("com.kateryna.testassignment.GEOFENCE_TRANSITION_EVENT"))
+        val connectivityFilter = IntentFilter()
+        connectivityFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        connectivityFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED")
+        registerReceiver(networkStatereceiver, connectivityFilter)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(receiver)
+        unregisterReceiver(geofenceTransitionreceiver)
+        unregisterReceiver(networkStatereceiver)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -80,6 +86,9 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     override val radiusChanges
         get() = RxTextView.textChanges(radius_edit_field).share()
 
+    override val wifiChanges
+        get() = RxTextView.textChanges(wifi_edit_field).share()
+
     override val setGeofenceClicks
         get() = RxView.clicks(set_geofence_btn)
 
@@ -90,7 +99,18 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         get() = RxView.clicks(place_pick_btn)
 
     override val setGeofenceTransition
-        get() = RxTextView.text(result)
+        get() = Consumer<EventType> {
+            result.setText(when (it) {
+                EventType.ENTER -> R.string.entered_geofence
+                EventType.EXIT -> R.string.exited_geofence
+                EventType.NOT_DETECED -> R.string.transition_not_detected
+            })
+        }
+
+    override val showError: Consumer<String>
+        get() = Consumer<String> {
+            Toast.makeText(this, getString(R.string.geofence_register_error, it), Toast.LENGTH_LONG).show()
+        }
 
     override val requestLocationPermission: Observable<Boolean>
         get() = permissions()

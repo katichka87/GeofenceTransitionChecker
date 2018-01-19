@@ -1,5 +1,6 @@
 package com.kateryna.testassignment.interfcaces
 
+import com.kateryna.testassignment.adapters.EventType
 import com.kateryna.testassignment.model.TransitionEvent
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
@@ -14,10 +15,12 @@ interface ViewInterface {
     val latChanges: Observable<CharSequence>
     val lngChanges: Observable<CharSequence>
     val radiusChanges: Observable<CharSequence>
+    val wifiChanges: Observable<CharSequence>
     val setGeofenceClicks: Observable<Any>
     val setGeofenceEnabled: Consumer<in Boolean>
     val pickLocationClicks: Observable<Any>
     val requestLocationPermission: Observable<Boolean>
     val startPlacePicker: Consumer<Any>
-    val setGeofenceTransition: Consumer<in CharSequence>
+    val setGeofenceTransition: Consumer<in EventType>
+    val showError: Consumer<String>
 }

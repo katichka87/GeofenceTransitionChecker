@@ -2,6 +2,7 @@ package com.kateryna.testassignment.dagger
 
 import com.kateryna.testassignment.view.Presenter
 import com.kateryna.testassignment.adapters.GeofenceAdapter
+import com.kateryna.testassignment.adapters.WiFiStateAdapter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -13,5 +14,5 @@ import javax.inject.Singleton
 class PresenterModule {
     @Provides
     @Singleton
-    fun providePresenter(adapter: GeofenceAdapter): Presenter = Presenter(adapter)
+    fun providePresenter(adapter: GeofenceAdapter, wiFiStateAdapter: WiFiStateAdapter): Presenter = Presenter(adapter, wiFiStateAdapter)
 }

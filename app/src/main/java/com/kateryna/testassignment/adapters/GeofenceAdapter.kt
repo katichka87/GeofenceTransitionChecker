@@ -10,11 +10,19 @@ import com.kateryna.testassignment.model.GeofenceModel
 import com.kateryna.testassignment.model.TransitionEvent
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by kati4ka on 1/16/18.
  */
 class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent: PendingIntent, val geofenceEnterExitEvents: Observable<TransitionEvent>) {
+
+    val geofenceStatus = BehaviorSubject.create<TransitionEvent>()
+    init {
+        geofenceEnterExitEvents.subscribe { geofenceStatus.onNext(it) }
+    }
+    val errorFlow = PublishSubject.create<Throwable>()
 
     private fun buildGeofence(geofence: GeofenceModel) = Geofence.Builder()
             .setRequestId(geofence.key)
@@ -27,6 +35,7 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
     val registerGeofence
         @SuppressLint("MissingPermission")
         get() = Consumer { geofence: GeofenceModel ->
+            geofenceStatus.onNext(TransitionEvent(geofence, EventType.NOT_DETECED))
             val builder = GeofencingRequest.Builder()
             builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
             builder.addGeofences(listOf(buildGeofence(geofence)))
@@ -36,6 +45,7 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
                         Log.i(GeofenceAdapter::class.java.simpleName, "Succeed to register Geofence")
                     }
                     .addOnFailureListener {
+                        errorFlow.onNext(it)
                         Log.e(GeofenceAdapter::class.java.simpleName, "Failed to register Geofence")
                     }
         }
@@ -43,6 +53,13 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
     val unregisterGeofence
         get() = Consumer { geofence: GeofenceModel ->
             geofencingClient.removeGeofences(listOf(geofence.key))
+                    .addOnSuccessListener {
+                        Log.i(GeofenceAdapter::class.java.simpleName, "Succeed to remove Geofence")
+                    }
+                    .addOnFailureListener {
+                        errorFlow.onNext(it)
+                        Log.e(GeofenceAdapter::class.java.simpleName, "Failed to remove Geofence")
+                    }
         }
 
 }

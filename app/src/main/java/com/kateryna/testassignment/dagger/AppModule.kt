@@ -8,8 +8,10 @@ import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
 import com.kateryna.testassignment.TestAssignmentApp
 import com.kateryna.testassignment.adapters.GeofenceAdapter
+import com.kateryna.testassignment.adapters.WiFiStateAdapter
 import com.kateryna.testassignment.device.GeofenceStateReceiver
 import com.kateryna.testassignment.device.GeofenceTransitionsIntentService
+import com.kateryna.testassignment.device.NetworkChangeReceiver
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Observable
@@ -38,8 +40,18 @@ class AppModule(val app: TestAssignmentApp) {
     @Singleton
     fun receiver(): GeofenceStateReceiver = GeofenceStateReceiver()
 
+
+    @Provides
+    @Singleton
+    fun wifiReceiver(): NetworkChangeReceiver = NetworkChangeReceiver()
+
     @Provides
     @Singleton
     fun geofenceAdapter(geofencingClient: GeofencingClient, geofenceIntent: PendingIntent, receiver: GeofenceStateReceiver): GeofenceAdapter =
             GeofenceAdapter(geofencingClient, geofenceIntent, receiver.stateChanges)
+
+    @Provides
+    @Singleton
+    fun wiFiStateAdapter(context: Context, receiver: NetworkChangeReceiver): WiFiStateAdapter =
+            WiFiStateAdapter(receiver, context)
 }

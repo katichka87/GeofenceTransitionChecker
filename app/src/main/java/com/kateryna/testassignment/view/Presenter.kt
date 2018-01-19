@@ -2,24 +2,28 @@ package com.kateryna.testassignment.view
 
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import com.kateryna.testassignment.R
 import com.kateryna.testassignment.adapters.EventType
 import com.kateryna.testassignment.adapters.GeofenceAdapter
+import com.kateryna.testassignment.adapters.WiFiStateAdapter
 import com.kateryna.testassignment.interfcaces.ViewInterface
 import com.kateryna.testassignment.model.GeofenceModel
 import io.reactivex.Observable
-import io.reactivex.functions.Function3
+import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function4
 import javax.inject.Inject
 
 /**
  * Created by kati4ka on 1/16/18.
  */
-class Presenter @Inject constructor(private val adapter: GeofenceAdapter) {
+class Presenter @Inject constructor(private val adapter: GeofenceAdapter, private val wiFiStateAdapter: WiFiStateAdapter) {
 
     val GEOFENCE_KEY = "fence1"
 
     var lat: Double? = null
     var lng: Double? = null
     var radius: Float? = null
+    var wiFiName: String? = null
 
     var view: ViewInterface? = null
         set(value) {
@@ -29,19 +33,20 @@ class Presenter @Inject constructor(private val adapter: GeofenceAdapter) {
                     value?.latChanges?.doOnNext { lat = if (it.isNotEmpty()) it.toString().toDouble() else null },
                     value?.lngChanges?.doOnNext { lng = if (it.isNotEmpty()) it.toString().toDouble() else null },
                     value?.radiusChanges?.doOnNext { radius = if (it.isNotEmpty()) it.toString().toFloat() else null },
-                    Function3 { lat: CharSequence, lng: CharSequence, radius: CharSequence -> lat.isNotEmpty() && lng.isNotEmpty() && radius.isNotEmpty() })
+                    value?.wifiChanges?.doOnNext { wiFiName = "\"${it}\"" },
+                    Function4 { lat: CharSequence, lng: CharSequence, radius: CharSequence, wiFi: CharSequence -> lat.isNotEmpty() && lng.isNotEmpty() && radius.isNotEmpty() && wiFi.isNotEmpty() })
                     .subscribe(value?.setGeofenceEnabled)
 
             value?.setGeofenceClicks
-                    ?.map { "" }
-                    ?.doOnNext(value?.setGeofenceTransition)
                     ?.flatMap { value.requestLocationPermission.map { it } }
                     ?.map { GeofenceModel(GEOFENCE_KEY, LatLng(lat.toString().toDouble(), lng.toString().toDouble()), radius.toString().toFloat()) }
                     ?.doOnNext(adapter.unregisterGeofence)
                     ?.subscribe(adapter.registerGeofence)
 
-            adapter.geofenceEnterExitEvents.map { if (it.event == EventType.ENTER)
-                "You are inside the geofence" else "You are outside the geofence" }.subscribe(value?.setGeofenceTransition)
+            Observable.combineLatest(adapter.geofenceStatus.map { it.event }, wiFiStateAdapter.wiFiNameObservable,
+                    BiFunction { transitionType: EventType, connectedWiFiName: String -> if (wiFiName == connectedWiFiName) EventType.ENTER else transitionType })
+                    .subscribe(value?.setGeofenceTransition)
 
+            adapter.errorFlow.map { it.toString() }.subscribe()
         }
 }
