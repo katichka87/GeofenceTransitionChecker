@@ -37,7 +37,7 @@
             android:id="@+id/lat_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:hint="@string/lat"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -55,7 +55,7 @@
             android:id="@+id/lng_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:hint="@string/lng"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -71,7 +71,7 @@
             android:id="@+id/radius_edit_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:hint="@string/radius"/>
 
     </android.support.design.widget.TextInputLayout>
