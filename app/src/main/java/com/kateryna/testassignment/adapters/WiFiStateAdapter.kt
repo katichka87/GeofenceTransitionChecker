@@ -5,14 +5,15 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import com.kateryna.testassignment.device.NetworkChangeReceiver
+import com.kateryna.testassignment.interfcaces.IWiFiStateAdapter
 import io.reactivex.subjects.BehaviorSubject
 
 /**
  * Created by kati4ka on 1/19/18.
  */
-class WiFiStateAdapter(networkChangeReceiver: NetworkChangeReceiver, private val context: Context) {
+open class WiFiStateAdapter(networkChangeReceiver: NetworkChangeReceiver, private val context: Context): IWiFiStateAdapter {
 
-    val wiFiNameObservable: BehaviorSubject<String> = BehaviorSubject.createDefault(getWifiName(context))
+    override open val wiFiNameObservable: BehaviorSubject<String> = BehaviorSubject.createDefault(getWifiName(context))
     init {
         networkChangeReceiver.networkNameChange.map { getWifiName(context) }.subscribe { wiFiNameObservable.onNext(it) }
     }

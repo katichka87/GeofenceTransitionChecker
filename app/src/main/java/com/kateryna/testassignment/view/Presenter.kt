@@ -2,9 +2,8 @@ package com.kateryna.testassignment.view
 
 import com.google.android.gms.maps.model.LatLng
 import com.kateryna.testassignment.adapters.EventType
-import com.kateryna.testassignment.adapters.GeofenceAdapter
-import com.kateryna.testassignment.adapters.WiFiStateAdapter
-import com.kateryna.testassignment.device.PlayServiceUtil
+import com.kateryna.testassignment.interfcaces.IGeofenceAdapter
+import com.kateryna.testassignment.interfcaces.IWiFiStateAdapter
 import com.kateryna.testassignment.interfcaces.ViewInterface
 import com.kateryna.testassignment.model.GeofenceModel
 import io.reactivex.Observable
@@ -15,7 +14,7 @@ import javax.inject.Inject
 /**
  * Created by kati4ka on 1/16/18.
  */
-class Presenter @Inject constructor(private val adapter: GeofenceAdapter, private val wiFiStateAdapter: WiFiStateAdapter) {
+class Presenter @Inject constructor(private val adapter: IGeofenceAdapter, private val wiFiStateAdapter: IWiFiStateAdapter) {
 
     val GEOFENCE_KEY = "fence1"
 
@@ -26,7 +25,7 @@ class Presenter @Inject constructor(private val adapter: GeofenceAdapter, privat
 
     var view: ViewInterface? = null
         set(value) {
-            value?.pickLocationClicks?.flatMap { value.requestLocationPermission }?.map { it }?.subscribe(value.startPlacePicker)
+            value?.pickLocationClicks?.flatMap { value.requestLocationPermission }?.filter { it }?.subscribe(value.startPlacePicker)
 
             Observable.combineLatest(
                     value?.latChanges?.doOnNext { lat = if (it.isNotEmpty()) it.toString().toDouble() else null },
@@ -37,7 +36,7 @@ class Presenter @Inject constructor(private val adapter: GeofenceAdapter, privat
                     .subscribe(value?.setGeofenceEnabled)
 
             value?.setGeofenceClicks
-                    ?.flatMap { value.requestLocationPermission.map { it } }
+                    ?.flatMap { value.requestLocationPermission.filter { it } }
                     ?.map { GeofenceModel(GEOFENCE_KEY, LatLng(lat.toString().toDouble(), lng.toString().toDouble()), radius.toString().toFloat()) }
                     ?.doOnNext(adapter.unregisterGeofence)
                     ?.subscribe(adapter.registerGeofence)

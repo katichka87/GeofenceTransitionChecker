@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
+import com.kateryna.testassignment.interfcaces.IGeofenceAdapter
 import com.kateryna.testassignment.model.GeofenceModel
 import com.kateryna.testassignment.model.TransitionEvent
 import io.reactivex.Observable
@@ -16,13 +17,13 @@ import io.reactivex.subjects.PublishSubject
 /**
  * Created by kati4ka on 1/16/18.
  */
-class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent: PendingIntent,
-                      geofenceEnterExitEvents: Observable<TransitionEvent>) {
-    val geofenceStatus = BehaviorSubject.create<TransitionEvent>()
+open class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent: PendingIntent,
+                      geofenceEnterExitEvents: Observable<TransitionEvent>): IGeofenceAdapter {
+    override val geofenceStatus = BehaviorSubject.create<TransitionEvent>()
     init {
         geofenceEnterExitEvents.doOnError { errorFlow.onNext(it) }.onErrorResumeNext(Observable.empty<TransitionEvent>()).subscribe { geofenceStatus.onNext(it) }
     }
-    val errorFlow: PublishSubject<Throwable> = PublishSubject.create<Throwable>()
+    override val errorFlow: PublishSubject<Throwable> = PublishSubject.create<Throwable>()
 
     private fun buildGeofence(geofence: GeofenceModel) = Geofence.Builder()
             .setRequestId(geofence.key)
@@ -33,7 +34,7 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
             .setLoiteringDelay(3000)
             .build()
 
-    val registerGeofence
+    override val registerGeofence
         @SuppressLint("MissingPermission")
         get() = Consumer { geofence: GeofenceModel ->
             geofenceStatus.onNext(TransitionEvent(geofence, EventType.NOT_DETECED))
@@ -51,7 +52,7 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
                     }
         }
 
-    val unregisterGeofence
+    override val unregisterGeofence
         get() = Consumer { geofence: GeofenceModel ->
             geofencingClient.removeGeofences(listOf(geofence.key))
                     .addOnSuccessListener {
