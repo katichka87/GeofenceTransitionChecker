@@ -12,6 +12,7 @@ import com.kateryna.testassignment.adapters.WiFiStateAdapter
 import com.kateryna.testassignment.device.GeofenceStateReceiver
 import com.kateryna.testassignment.device.GeofenceTransitionsIntentService
 import com.kateryna.testassignment.device.NetworkChangeReceiver
+import com.kateryna.testassignment.device.PlayServiceUtil
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Observable
@@ -54,4 +55,8 @@ class AppModule(val app: TestAssignmentApp) {
     @Singleton
     fun wiFiStateAdapter(context: Context, receiver: NetworkChangeReceiver): WiFiStateAdapter =
             WiFiStateAdapter(receiver, context)
+
+    @Provides
+    @Singleton
+    fun playServiceUtil(): PlayServiceUtil = PlayServiceUtil()
 }

@@ -18,8 +18,10 @@ import com.kateryna.testassignment.TestAssignmentApp
 import com.kateryna.testassignment.adapters.EventType
 import com.kateryna.testassignment.device.GeofenceStateReceiver
 import com.kateryna.testassignment.device.NetworkChangeReceiver
+import com.kateryna.testassignment.device.PlayServiceUtil
 import com.kateryna.testassignment.interfcaces.ViewInterface
 import io.reactivex.Observable
+import io.reactivex.functions.BiConsumer
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     @Inject lateinit var presenter: Presenter
     @Inject lateinit var geofenceTransitionreceiver: GeofenceStateReceiver
     @Inject lateinit var networkStatereceiver: NetworkChangeReceiver
+    @Inject lateinit var playServiceUtil: PlayServiceUtil
     private val PLACE_PICKER_REQUEST = 1
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private var locationPermissionSubject: PublishSubject<Boolean>? = null
@@ -44,6 +47,8 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         connectivityFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
         connectivityFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED")
         registerReceiver(networkStatereceiver, connectivityFilter)
+
+        playServiceUtil.checkGoogleServices(this)
     }
 
     override fun onDestroy() {
@@ -103,11 +108,12 @@ class MainActivity : AppCompatActivity(), ViewInterface {
             result.setText(when (it) {
                 EventType.ENTER -> R.string.entered_geofence
                 EventType.EXIT -> R.string.exited_geofence
+                EventType.DWELL -> R.string.inside_geofence
                 EventType.NOT_DETECED -> R.string.transition_not_detected
             })
         }
 
-    override val showError: Consumer<String>
+    override val showError
         get() = Consumer<String> {
             Toast.makeText(this, getString(R.string.geofence_register_error, it), Toast.LENGTH_LONG).show()
         }

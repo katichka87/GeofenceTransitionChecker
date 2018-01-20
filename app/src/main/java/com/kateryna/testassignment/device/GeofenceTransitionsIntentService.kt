@@ -13,8 +13,12 @@ class GeofenceTransitionsIntentService : IntentService("GeofenceTransitionsInten
     override fun onHandleIntent(intent: Intent?) {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
         if (geofencingEvent.hasError()) {
-            val errorMessage = getErrorString(this, geofencingEvent.errorCode)
-            Log.e(TAG, errorMessage)
+            Log.e(TAG, "Error getting geofence transition ${geofencingEvent.errorCode}")
+            // Send broadcast about error
+            val broadcastIntent = Intent()
+            broadcastIntent.action = "com.kateryna.testassignment.GEOFENCE_TRANSITION_EVENT"
+            broadcastIntent.putExtra("error", geofencingEvent.errorCode)
+            sendBroadcast(broadcastIntent)
             return
         }
 
@@ -23,8 +27,7 @@ class GeofenceTransitionsIntentService : IntentService("GeofenceTransitionsInten
 
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            // Get the geofences that were triggered. A single event can trigger
-            // multiple geofences.
+            // Get the geofences that were triggered. A single event can trigger multiple geofences.
             val triggeringGeofences = geofencingEvent.triggeringGeofences
 
             // Send the broadcast
@@ -35,17 +38,4 @@ class GeofenceTransitionsIntentService : IntentService("GeofenceTransitionsInten
             sendBroadcast(broadcastIntent)
         }
     }
-
-    fun getErrorString(context: Context, errorCode: Int): String {
-        return ""
-        /*val mResources = context.getResources()
-        when (errorCode) {
-            GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE -> return mResources.getString(R.string.geofence_not_available)
-            GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES -> return mResources.getString(R.string.geofence_too_many_geofences)
-            GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS -> return mResources.getString(R.string.geofence_too_many_pending_intents)
-            else -> return mResources.getString(R.string.unknown_geofence_error)
-        }*/
-    }
-
-
 }

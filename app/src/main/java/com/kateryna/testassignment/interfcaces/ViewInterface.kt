@@ -1,8 +1,9 @@
 package com.kateryna.testassignment.interfcaces
 
+import android.app.Activity
 import com.kateryna.testassignment.adapters.EventType
-import com.kateryna.testassignment.model.TransitionEvent
 import io.reactivex.Observable
+import io.reactivex.functions.BiConsumer
 import io.reactivex.functions.Consumer
 
 /**

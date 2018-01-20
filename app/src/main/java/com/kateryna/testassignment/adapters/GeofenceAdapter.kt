@@ -16,20 +16,21 @@ import io.reactivex.subjects.PublishSubject
 /**
  * Created by kati4ka on 1/16/18.
  */
-class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent: PendingIntent, val geofenceEnterExitEvents: Observable<TransitionEvent>) {
-
+class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent: PendingIntent,
+                      geofenceEnterExitEvents: Observable<TransitionEvent>) {
     val geofenceStatus = BehaviorSubject.create<TransitionEvent>()
     init {
-        geofenceEnterExitEvents.subscribe { geofenceStatus.onNext(it) }
+        geofenceEnterExitEvents.doOnError { errorFlow.onNext(it) }.onErrorResumeNext(Observable.empty<TransitionEvent>()).subscribe { geofenceStatus.onNext(it) }
     }
-    val errorFlow = PublishSubject.create<Throwable>()
+    val errorFlow: PublishSubject<Throwable> = PublishSubject.create<Throwable>()
 
     private fun buildGeofence(geofence: GeofenceModel) = Geofence.Builder()
             .setRequestId(geofence.key)
             .setCircularRegion(geofence.latLng.latitude, geofence.latLng.longitude, geofence.radius)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setNotificationResponsiveness(1000)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT or Geofence.GEOFENCE_TRANSITION_DWELL)
+            .setLoiteringDelay(3000)
             .build()
 
     val registerGeofence
@@ -37,7 +38,7 @@ class GeofenceAdapter(val geofencingClient: GeofencingClient, val geofenceIntent
         get() = Consumer { geofence: GeofenceModel ->
             geofenceStatus.onNext(TransitionEvent(geofence, EventType.NOT_DETECED))
             val builder = GeofencingRequest.Builder()
-            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER or GeofencingRequest.INITIAL_TRIGGER_DWELL or GeofencingRequest.INITIAL_TRIGGER_EXIT)
             builder.addGeofences(listOf(buildGeofence(geofence)))
 
             geofencingClient.addGeofences(builder.build(), geofenceIntent)

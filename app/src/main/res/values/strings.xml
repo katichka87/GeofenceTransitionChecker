@@ -8,7 +8,8 @@
     <string name="set_geofence">Setup geofence</string>
     <string name="set_geofence_btn_label">Set geofence</string>
     <string name="transition_not_detected">You are not detected inside the geofence</string>
-    <string name="entered_geofence">You are inside the geofence</string>
-    <string name="exited_geofence">You are outside the geofence</string>
+    <string name="entered_geofence">You entered the geofence</string>
+    <string name="inside_geofence">You are inside the geofence</string>
+    <string name="exited_geofence">You exited the geofence</string>
     <string name="geofence_register_error">Error occurred: %s</string>
 </resources>

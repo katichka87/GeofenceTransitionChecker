@@ -1,11 +1,10 @@
 package com.kateryna.testassignment.view
 
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
-import com.kateryna.testassignment.R
 import com.kateryna.testassignment.adapters.EventType
 import com.kateryna.testassignment.adapters.GeofenceAdapter
 import com.kateryna.testassignment.adapters.WiFiStateAdapter
+import com.kateryna.testassignment.device.PlayServiceUtil
 import com.kateryna.testassignment.interfcaces.ViewInterface
 import com.kateryna.testassignment.model.GeofenceModel
 import io.reactivex.Observable
